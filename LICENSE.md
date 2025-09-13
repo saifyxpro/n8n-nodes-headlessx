@@ -1,4 +1,6 @@
-Copyright 2022 n8n
+# MIT License
+
+Copyright (c) 2025 SaifyXPRO
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -17,3 +19,29 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Third-Party Licenses
+
+This project includes or depends on the following third-party software:
+
+### n8n
+- **License**: Sustainable Use License
+- **Copyright**: n8n GmbH
+- **Website**: https://n8n.io/
+
+### HeadlessX
+- **License**: MIT License  
+- **Copyright**: SaifyXPRO
+- **Repository**: https://github.com/SaifyXPRO/HeadlessX
+
+### TypeScript
+- **License**: Apache License 2.0
+- **Copyright**: Microsoft Corporation
+- **Website**: https://www.typescriptlang.org/
+
+### ESLint
+- **License**: MIT License
+- **Copyright**: JS Foundation and other contributors
+- **Website**: https://eslint.org/
+
+For the complete list of dependencies and their licenses, please refer to the `package.json` file and the respective package documentation.

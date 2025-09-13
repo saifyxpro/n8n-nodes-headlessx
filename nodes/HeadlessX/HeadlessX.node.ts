@@ -29,9 +29,9 @@ export class HeadlessX implements INodeType {
 			},
 		],
 		requestDefaults: {
-			baseURL: '={{$credentials.baseUrl}}',
+			baseURL: '={{ $credentials.baseUrl }}',
 			headers: {
-				Accept: 'application/json',
+				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 			},
 		},
@@ -413,7 +413,38 @@ export class HeadlessX implements INodeType {
 			try {
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
 
-				let responseData: any;
+				// Helper function to validate URLs
+				const validateUrl = (url: string, paramName: string): void => {
+					if (!url || typeof url !== 'string' || !url.trim()) {
+						throw new NodeOperationError(this.getNode(), `${paramName} is required and must be a non-empty string`, {
+							itemIndex,
+						});
+					}
+
+					// Trim the URL to remove any whitespace
+					const trimmedUrl = url.trim();
+
+					// Simple and reliable URL validation - must start with http/https
+					if (!trimmedUrl.match(/^https?:\/\/.+/)) {
+						throw new NodeOperationError(this.getNode(), `${paramName} must be a valid URL starting with http:// or https://`, {
+							itemIndex,
+						});
+					}
+
+					// Check for basic URL structure - must have at least one dot for domain
+					if (!trimmedUrl.includes('.') || trimmedUrl.includes(' ')) {
+						throw new NodeOperationError(this.getNode(), `${paramName} must be a valid URL without spaces`, {
+							itemIndex,
+						});
+					}
+
+					// Check minimum length for a valid URL (e.g., http://a.b)
+					if (trimmedUrl.length < 11) {
+						throw new NodeOperationError(this.getNode(), `${paramName} must be a valid complete URL`, {
+							itemIndex,
+						});
+					}
+				};				let responseData: any;
 				let binaryData: IBinaryData | undefined;
 
 				switch (operation) {
@@ -431,6 +462,8 @@ export class HeadlessX implements INodeType {
 
 					case 'status':
 						const statusUrl = this.getNodeParameter('url', itemIndex) as string;
+						validateUrl(statusUrl, 'URL');
+
 						responseData = await this.helpers.requestWithAuthentication.call(
 							this,
 							'headlessXApi',
@@ -445,6 +478,8 @@ export class HeadlessX implements INodeType {
 
 					case 'htmlGet':
 						const htmlUrl = this.getNodeParameter('url', itemIndex) as string;
+						validateUrl(htmlUrl, 'URL');
+
 						const htmlOptions = this.getNodeParameter('additionalOptions', itemIndex, {}) as IDataObject;
 
 						responseData = await this.helpers.requestWithAuthentication.call(
@@ -461,7 +496,16 @@ export class HeadlessX implements INodeType {
 
 					case 'htmlPost':
 						const htmlPostUrl = this.getNodeParameter('postUrl', itemIndex) as string;
-						const htmlAdvancedOptions = JSON.parse(this.getNodeParameter('advancedOptions', itemIndex, '{}') as string);
+						validateUrl(htmlPostUrl, 'URL');
+
+						let htmlAdvancedOptions: IDataObject;
+						try {
+							htmlAdvancedOptions = JSON.parse(this.getNodeParameter('advancedOptions', itemIndex, '{}') as string);
+						} catch {
+							throw new NodeOperationError(this.getNode(), 'Advanced Options must be valid JSON', {
+								itemIndex,
+							});
+						}
 
 						responseData = await this.helpers.requestWithAuthentication.call(
 							this,
@@ -477,6 +521,7 @@ export class HeadlessX implements INodeType {
 
 					case 'contentGet':
 						const contentUrl = this.getNodeParameter('url', itemIndex) as string;
+						validateUrl(contentUrl, 'URL');
 						const contentOptions = this.getNodeParameter('additionalOptions', itemIndex, {}) as IDataObject;
 
 						responseData = await this.helpers.requestWithAuthentication.call(
@@ -493,7 +538,15 @@ export class HeadlessX implements INodeType {
 
 					case 'contentPost':
 						const contentPostUrl = this.getNodeParameter('postUrl', itemIndex) as string;
-						const contentAdvancedOptions = JSON.parse(this.getNodeParameter('advancedOptions', itemIndex, '{}') as string);
+						validateUrl(contentPostUrl, 'URL');
+						let contentAdvancedOptions: IDataObject;
+						try {
+							contentAdvancedOptions = JSON.parse(this.getNodeParameter('advancedOptions', itemIndex, '{}') as string);
+						} catch {
+							throw new NodeOperationError(this.getNode(), 'Advanced Options must be valid JSON', {
+								itemIndex,
+							});
+						}
 
 						responseData = await this.helpers.requestWithAuthentication.call(
 							this,
@@ -509,6 +562,7 @@ export class HeadlessX implements INodeType {
 
 					case 'screenshot':
 						const screenshotUrl = this.getNodeParameter('url', itemIndex) as string;
+						validateUrl(screenshotUrl, 'URL');
 						const screenshotGeneralOptions = this.getNodeParameter('additionalOptions', itemIndex, {}) as IDataObject;
 						const screenshotSpecificOptions = this.getNodeParameter('screenshotOptions', itemIndex, {}) as IDataObject;
 
@@ -546,6 +600,7 @@ export class HeadlessX implements INodeType {
 
 					case 'pdf':
 						const pdfUrl = this.getNodeParameter('url', itemIndex) as string;
+						validateUrl(pdfUrl, 'URL');
 						const pdfGeneralOptions = this.getNodeParameter('additionalOptions', itemIndex, {}) as IDataObject;
 						const pdfSpecificOptions = this.getNodeParameter('pdfOptions', itemIndex, {}) as IDataObject;
 
@@ -582,7 +637,15 @@ export class HeadlessX implements INodeType {
 
 					case 'render':
 						const renderUrl = this.getNodeParameter('postUrl', itemIndex) as string;
-						const renderOptions = JSON.parse(this.getNodeParameter('advancedOptions', itemIndex, '{}') as string);
+						validateUrl(renderUrl, 'URL');
+						let renderOptions: IDataObject;
+						try {
+							renderOptions = JSON.parse(this.getNodeParameter('advancedOptions', itemIndex, '{}') as string);
+						} catch {
+							throw new NodeOperationError(this.getNode(), 'Advanced Options must be valid JSON', {
+								itemIndex,
+							});
+						}
 
 						responseData = await this.helpers.requestWithAuthentication.call(
 							this,
@@ -597,7 +660,35 @@ export class HeadlessX implements INodeType {
 						break;
 
 					case 'batch':
-						const batchUrls = JSON.parse(this.getNodeParameter('batchUrls', itemIndex) as string);
+						let batchUrls: string[];
+						try {
+							const batchUrlsInput = this.getNodeParameter('batchUrls', itemIndex) as string;
+							batchUrls = JSON.parse(batchUrlsInput);
+
+							// Validate that it's an array
+							if (!Array.isArray(batchUrls)) {
+								throw new NodeOperationError(this.getNode(), 'URLs must be provided as a JSON array', {
+									itemIndex,
+								});
+							}
+
+							// Validate URLs
+							for (const url of batchUrls) {
+								if (typeof url !== 'string' || !url.trim()) {
+									throw new NodeOperationError(this.getNode(), 'Each URL must be a non-empty string', {
+										itemIndex,
+									});
+								}
+							}
+						} catch (error) {
+							if (error instanceof NodeOperationError) {
+								throw error;
+							}
+							throw new NodeOperationError(this.getNode(), 'Invalid JSON format for URLs. Please provide a valid JSON array of URLs like: ["https://example.com", "https://another.com"]', {
+								itemIndex,
+							});
+						}
+
 						const batchOptions = this.getNodeParameter('batchOptions', itemIndex, {}) as IDataObject;
 
 						responseData = await this.helpers.requestWithAuthentication.call(
@@ -610,11 +701,20 @@ export class HeadlessX implements INodeType {
 								json: true,
 							},
 						);
-						break;					default:
+						break;
+
+					default:
 						throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, {
 							itemIndex,
 						});
-				}				const executionData: INodeExecutionData = {
+				}
+
+				// Ensure we always return an object for `json`
+				if (typeof responseData === 'string') {
+					responseData = { data: responseData };
+				}
+
+				const executionData: INodeExecutionData = {
 					json: responseData,
 					pairedItem: itemIndex,
 				};

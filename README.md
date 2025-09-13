@@ -50,6 +50,15 @@ npm install n8n-nodes-headlessx
    cp -r n8n-nodes-headlessx ~/.n8n/custom/
    ```
 
+  Windows (PowerShell) alternative:
+  ```powershell
+  # Create custom nodes directory if it doesn't exist
+  New-Item -ItemType Directory -Force -Path "$HOME/.n8n/custom" | Out-Null
+
+  # Copy the package
+  Copy-Item -Recurse -Force .\n8n-nodes-headlessx "$HOME/.n8n/custom/"
+  ```
+
 #### Option 4: For n8n Docker Users
 Add the package to your n8n Docker container:
 ```dockerfile

@@ -45,28 +45,25 @@ export class HeadlessXApi implements ICredentialType {
 		},
 	};
 
-	// Test the credential by calling the health endpoint
+	// Test the credential by calling the status endpoint which requires authentication
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{ $credentials.baseUrl }}',
-			url: '/api/health',
+			url: '/api/status',
 			method: 'GET',
-			headers: {
-				'X-Token': '={{ $credentials.token }}',
-			},
-			qs: {
-				token: '={{ $credentials.token }}',
-			},
-			timeout: 15000,
+			timeout: 20000,
 			json: true,
+			qs: {
+				url: 'https://example.com',
+			},
 		},
 		rules: [
 			{
 				type: 'responseSuccessBody',
 				properties: {
-					key: 'status',
-					value: 'OK',
-					message: 'HeadlessX API connection successful! Server is running and accessible.',
+					key: 'server.name',
+					value: 'HeadlessX - Advanced Browserless Web Scraping API',
+					message: 'HeadlessX API authentication successful! Token is valid and server status retrieved.',
 				},
 			},
 		],

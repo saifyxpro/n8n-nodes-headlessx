@@ -5,8 +5,12 @@
 [![npm version](https://badge.fury.io/js/n8n-nodes-headlessx.svg)](https://badge.fury.io/js/n8n-nodes-headlessx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-orange)](https://docs.n8n.io/integrations/community-nodes/)
+[![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green)](https://github.com/your-repo/n8n-nodes-headlessx)
+[![Version](https://img.shields.io/badge/Version-v1.1.2-blue)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/releases)
 
 An n8n community node for integrating with [HeadlessX](https://github.com/SaifyXPRO/HeadlessX) - a powerful headless browser API for web scraping, screenshot capture, and PDF generation.
+
+> **✨ New in v1.1.2**: Enhanced UX with visual operation categories, emoji icons, advanced POST options, and improved user interface!
 
 ## 🚀 What is HeadlessX?
 
@@ -19,12 +23,33 @@ HeadlessX is a robust headless browser API built with Puppeteer that provides:
 - **Advanced Options**: Full control over browser behavior, waiting conditions, and page interactions
 - **Human-like Behavior**: Simulate real user interactions to bypass anti-bot measures
 
+> **📋 Important**: HeadlessX runs as a **separate API server** that you must install and run independently. This n8n node acts as a client to communicate with your HeadlessX server instance.
+> 
+> **🔗 Get HeadlessX**: [github.com/SaifyXPRO/HeadlessX](https://github.com/SaifyXPRO/HeadlessX)
+
 ## 📦 Installation
 
-### Prerequisites
+### ⚠️ Important Prerequisites
 
-1. **n8n installed**: Follow the [n8n installation guide](https://docs.n8n.io/getting-started/installation/)
-2. **HeadlessX API server**: Set up your HeadlessX instance following the [HeadlessX documentation](https://github.com/SaifyXPRO/HeadlessX)
+**Before installing this n8n node, you MUST have HeadlessX server running:**
+
+1. **Install HeadlessX Server First**: 
+   ```bash
+   # Clone the HeadlessX repository
+   git clone https://github.com/SaifyXPRO/HeadlessX.git
+   cd HeadlessX
+   
+   # Install dependencies
+   npm install
+   
+   # Start the HeadlessX server
+   npm start
+   ```
+   📍 **Repository**: [github.com/SaifyXPRO/HeadlessX](https://github.com/SaifyXPRO/HeadlessX)
+
+2. **n8n installed**: Follow the [n8n installation guide](https://docs.n8n.io/getting-started/installation/)
+
+> **🚨 Critical**: This n8n community node is a **client** that connects to the HeadlessX API server. The HeadlessX server must be running and accessible before you can use this node in your n8n workflows.
 
 ### Install the Community Node
 
@@ -84,6 +109,28 @@ The node supports multiple authentication methods:
 - **Header Authentication**: `X-Token: YOUR_TOKEN`
 
 Both methods are automatically applied for maximum compatibility.
+
+### 3. Verify Your Setup
+
+Before creating workflows, verify your setup is working:
+
+1. **Check HeadlessX Server Status**:
+   ```bash
+   # Test if HeadlessX server is running
+   curl http://localhost:3000/api/health
+   # Should return: {"status":"ok","uptime":"..."}
+   ```
+
+2. **Test n8n Node Connection**:
+   - Create a new workflow in n8n
+   - Add a HeadlessX node
+   - Select "Health Check" operation
+   - Execute the node to verify connectivity
+
+3. **Troubleshooting**:
+   - Ensure HeadlessX server is running on the correct port
+   - Check firewall/network connectivity between n8n and HeadlessX
+   - Verify API token is correctly configured
 
 ## ⚙️ Configuration & Testing
 
@@ -206,6 +253,93 @@ The credential automatically tests connectivity to your HeadlessX server:
 ### 🔄 Advanced Operations
 
 #### Full Page Render
+
+## 🎨 Visual Interface & Screenshots
+
+### Enhanced Operation Selection (v1.1.2)
+
+The n8n-nodes-headlessx v1.1.2 features a completely redesigned user interface with visual operation categories, emoji icons, and smart organization for improved user experience.
+
+#### 📊 Operation Categories
+
+Operations are now organized into three logical categories:
+
+**🔍 Content Extraction**
+- 📄 Extract HTML (GET/POST) - Raw HTML scraping
+- 📝 Extract Content (GET/POST) - Clean text extraction
+
+**📸 Visual Capture** 
+- 📸 Take Screenshot - High-quality page captures
+- 📋 Generate PDF - Professional document generation
+
+**⚡ Advanced Processing**
+- 🎭 Advanced Render - Custom script execution  
+- 🔄 Batch Processing - Multi-URL processing
+
+### 📷 Operation Screenshots
+
+#### Credential Configuration
+Set up your HeadlessX API connection with easy credential management:
+
+![Credential Success](assets/credential_success.png)
+*Successful HeadlessX API credential configuration*
+
+#### Extract HTML (GET) - Simple Web Scraping
+Quick HTML extraction for basic scraping tasks:
+
+![Extract HTML GET](assets/extract_html_get.png)
+*Extract HTML using GET method with simple configuration*
+
+#### Extract HTML (POST) - Advanced Web Scraping  
+Advanced HTML extraction with comprehensive browser control:
+
+![Extract HTML POST](assets/extract_html_post.png)
+*Extract HTML using POST method with advanced options*
+
+#### Extract Content (GET) - Clean Text Extraction
+Extract readable text content from web pages:
+
+![Extract Text GET](assets/extract_text_get.png)
+*Extract clean text content using GET method*
+
+#### Take Screenshot - Visual Page Capture
+Capture high-quality screenshots with device emulation and format options:
+
+![Take Screenshot](assets/take_screenshot.png)
+*Screenshot capture with device emulation and quality controls*
+
+#### Generate PDF - Document Creation
+Convert web pages to professional PDF documents:
+
+![Generate PDF](assets/generate_pdf.png)
+*PDF generation with custom formatting options*
+
+#### Advanced Render - Custom Processing
+Execute custom scripts and advanced page interactions:
+
+![Full Page Render](assets/full_page_render.png)
+*Advanced page rendering with custom script execution*
+
+### 🎯 Enhanced Features (v1.1.2)
+
+#### Visual Operation Selection
+- **📱 Emoji Icons**: Each operation features intuitive icons for quick recognition
+- **🏷️ Smart Categories**: Operations grouped by functionality (Content, Visual, Advanced)
+- **💡 Detailed Descriptions**: Enhanced tooltips and action descriptions
+- **🎯 Smart Defaults**: Most common operation (HTML GET) pre-selected
+
+#### Advanced POST Options
+- **🔧 Comprehensive Controls**: All POST operations include advanced option collections
+- **📊 Device Emulation**: Pre-configured device presets (Desktop, Mobile, Tablet)
+- **🎨 Format Options**: Multiple image formats (PNG, JPEG, WebP) with quality controls
+- **⚡ Performance Tuning**: Timeout controls, concurrency limits, error handling
+
+#### Enhanced User Experience
+- **✅ Real-time Validation**: URL validation with helpful error messages
+- **📝 JSON Editor**: Built-in JSON editor for batch URL configuration
+- **🔄 Error Recovery**: Improved error handling with context-aware messages
+- **📋 Better Organization**: Alphabetical property ordering for easier navigation
+
 ## 📋 Example Workflows
 
 ### Example 1: Simple Web Scraping

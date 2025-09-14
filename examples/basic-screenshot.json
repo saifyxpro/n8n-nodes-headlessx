@@ -1,0 +1,33 @@
+{
+  "name": "Basic Screenshot Capture",
+  "description": "Capture a screenshot of a webpage using HeadlessX",
+  "workflow": {
+    "nodes": [
+      {
+        "parameters": {
+          "url": "https://example.com",
+          "format": "png",
+          "fullPage": true,
+          "quality": 80
+        },
+        "id": "headlessx-screenshot",
+        "name": "HeadlessX Screenshot",
+        "type": "n8n-nodes-headlessx.headlessx",
+        "typeVersion": 1,
+        "position": [380, 240],
+        "operation": "screenshot"
+      }
+    ],
+    "connections": {}
+  },
+  "usage": {
+    "description": "This example demonstrates how to capture a full-page screenshot of a webpage.",
+    "parameters": {
+      "url": "The webpage URL to capture",
+      "format": "Image format (png, jpeg, webp)",
+      "fullPage": "Capture full page or just viewport",
+      "quality": "Image quality (1-100 for JPEG/WebP)"
+    },
+    "output": "Returns screenshot as binary data that can be saved or processed further"
+  }
+}

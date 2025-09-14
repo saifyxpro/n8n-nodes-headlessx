@@ -1,2 +1,4 @@
 .DS_Store
 *.tsbuildinfo
+test-api.js
+upgrades

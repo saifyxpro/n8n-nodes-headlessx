@@ -1,0 +1,92 @@
+name: Bug Report
+description: File a bug report to help us improve
+title: "[Bug]: "
+labels: ["bug", "triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: input
+    id: version
+    attributes:
+      label: Node Version
+      description: What version of n8n-nodes-headlessx are you using?
+      placeholder: "1.0.8"
+    validations:
+      required: true
+
+  - type: input
+    id: n8n-version
+    attributes:
+      label: n8n Version
+      description: What version of n8n are you using?
+      placeholder: "1.x.x"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected to happen
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the issue
+      placeholder: |
+        1. Go to...
+        2. Click on...
+        3. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Node Configuration
+      description: Share your node configuration (remove sensitive data)
+      render: json
+      placeholder: |
+        {
+          "operation": "screenshot",
+          "url": "https://example.com",
+          ...
+        }
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs
+      description: Include any relevant error messages or logs
+      render: text
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where are you running n8n?
+      options:
+        - n8n Cloud
+        - Self-hosted (Docker)
+        - Self-hosted (npm)
+        - n8n Desktop
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

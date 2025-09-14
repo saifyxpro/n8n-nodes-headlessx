@@ -1,0 +1,42 @@
+{
+  "name": "Batch Web Scraping",
+  "description": "Scrape content from multiple websites in batch",
+  "workflow": {
+    "nodes": [
+      {
+        "parameters": {
+          "operation": "batch",
+          "urls": [
+            "https://example.com",
+            "https://github.com",
+            "https://docs.n8n.io"
+          ],
+          "batchOperation": "content",
+          "waitTime": 2000,
+          "concurrent": 3
+        },
+        "id": "headlessx-batch",
+        "name": "HeadlessX Batch Scraping",
+        "type": "n8n-nodes-headlessx.headlessx",
+        "typeVersion": 1,
+        "position": [380, 240]
+      }
+    ],
+    "connections": {}
+  },
+  "usage": {
+    "description": "Process multiple URLs concurrently to extract content efficiently.",
+    "parameters": {
+      "urls": "Array of URLs to process",
+      "batchOperation": "Operation to perform (content, html, screenshot)",
+      "waitTime": "Wait time in milliseconds",
+      "concurrent": "Number of concurrent requests"
+    },
+    "output": "Returns array of results for each URL processed",
+    "notes": [
+      "Use concurrent processing for better performance",
+      "Be mindful of rate limits on target websites",
+      "Consider adding delays for respectful scraping"
+    ]
+  }
+}

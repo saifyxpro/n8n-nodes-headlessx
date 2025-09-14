@@ -1,0 +1,28 @@
+{
+	"node": "n8n-nodes-headlessx.headlessX",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Development", "Developer Tools", "Data & Storage"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/SaifyXPRO/HeadlessX#authentication"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/SaifyXPRO/HeadlessX"
+			}
+		],
+		"generic": [
+			{
+				"label": "API Documentation",
+				"url": "https://github.com/SaifyXPRO/HeadlessX/blob/main/API.md"
+			},
+			{
+				"label": "Examples",
+				"url": "https://github.com/SaifyXPRO/n8n-nodes-headlessx/tree/main/examples"
+			}
+		]
+	}
+}

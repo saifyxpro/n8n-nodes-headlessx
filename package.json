@@ -1,17 +1,20 @@
 {
   "name": "n8n-nodes-headlessx",
-  "version": "1.0.4",
+  "version": "1.1.2",
   "description": "n8n community node for HeadlessX API integration - web scraping, screenshots, and PDF generation",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
+    "n8n-node",
     "headlessx",
     "web-scraping",
     "screenshot",
     "pdf",
     "puppeteer",
     "browser-automation",
-    "headless-browser"
+    "headless-browser",
+    "scraping",
+    "automation"
   ],
   "license": "MIT",
   "homepage": "https://github.com/SaifyXPRO/n8n-nodes-headlessx",

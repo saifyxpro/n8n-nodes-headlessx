@@ -14,9 +14,9 @@ export class HeadlessXApi implements ICredentialType {
 			displayName: 'Base URL',
 			name: 'baseUrl',
 			type: 'string',
-			default: 'http://localhost:3000',
+			default: 'https://headlessx.saify.me',
 			description: 'The base URL of your HeadlessX API server (without /api)',
-			placeholder: 'http://localhost:3000',
+			placeholder: 'https://headlessx.saify.me',
 		},
 		{
 			displayName: 'API Token',
@@ -45,27 +45,19 @@ export class HeadlessXApi implements ICredentialType {
 		},
 	};
 
-	// Test the credential by calling the status endpoint which requires authentication
+	// Test the credential by calling the health endpoint which requires authentication
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{ $credentials.baseUrl }}',
 			url: '/api/status',
 			method: 'GET',
-			timeout: 20000,
-			json: true,
+			headers: {
+				'X-Token': '={{ $credentials.token }}',
+				'Authorization': '=Bearer {{ $credentials.token }}',
+			},
 			qs: {
-				url: 'https://example.com',
+				token: '={{ $credentials.token }}',
 			},
 		},
-		rules: [
-			{
-				type: 'responseSuccessBody',
-				properties: {
-					key: 'server.name',
-					value: 'HeadlessX - Advanced Browserless Web Scraping API',
-					message: 'HeadlessX API authentication successful! Token is valid and server status retrieved.',
-				},
-			},
-		],
 	};
 }

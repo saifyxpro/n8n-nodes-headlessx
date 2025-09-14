@@ -1,14 +1,13 @@
-import { INodeProperties, INodePropertyOptions, IExecuteFunctions, INodeExecutionData, IDataObject, NodeOperationError } from 'n8n-workflow';
+import type { IDataObject, IExecuteFunctions, INodeExecutionData, INodeProperties, INodePropertyOptions } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 import { headlessxApiRequest } from '../helpers/requests';
 
-export const optionGet: INodePropertyOptions = {
+export const option: INodePropertyOptions = {
   name: 'Batch Processing',
   value: 'batch',
   description: 'Process multiple requests in batch mode',
   action: 'Batch processing',
 };
-
-export const option = optionGet;
 
 export const properties: INodeProperties[] = [
   {
@@ -115,19 +114,9 @@ export const properties: INodeProperties[] = [
       },
     ],
   },
-  {
-    displayName: 'Simplify',
-    name: 'simple',
-    type: 'boolean',
-    default: true,
-    description: 'Whether to return a simplified version of the response instead of the raw data',
-    displayOptions: {
-      show: {
-        operation: ['batch'],
-      },
-    },
-  },
 ];
+
+// Removed unused 'simple' option - was defined but never used in execute function
 
 export async function execute(this: IExecuteFunctions, itemIndex: number): Promise<INodeExecutionData[]> {
   let batchUrls: string[];

@@ -1,6 +1,8 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData, INodeProperties, INodePropertyOptions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
+import { Buffer } from 'buffer';
 import { headlessxApiRequest } from '../helpers/requests';
+import { PREVIEW_OPTION, TIMEOUT_OPTION, WAIT_UNTIL_OPTION, EXTRA_WAIT_TIME_OPTION, HEADERS_OPTION, USER_AGENT_OPTION } from './shared/commonOptions';
 
 export const optionGet: INodePropertyOptions = {
   name: 'Extract HTML (GET)',
@@ -18,8 +20,8 @@ export const optionPost: INodePropertyOptions = {
 
 export const properties: INodeProperties[] = [
   {
-    displayName: 'Additional Options',
-    name: 'additionalOptions',
+    displayName: 'HTML GET Options',
+    name: 'htmlGetOptions',
     type: 'collection',
     placeholder: 'Add Option',
     default: {},
@@ -27,82 +29,163 @@ export const properties: INodeProperties[] = [
       show: { operation: ['htmlGet'] },
     },
     options: [
-      {
-        displayName: 'Timeout (MS)',
-        name: 'timeout',
-        type: 'number',
-        default: 0,
-        description: 'Override request timeout. 0 uses the server default.',
-      },
-      {
-        displayName: 'Wait Until',
-        name: 'waitUntil',
-        type: 'options',
-        options: [
-          { name: 'Load', value: 'load' },
-          { name: 'DOMContentLoaded', value: 'domcontentloaded' },
-          { name: 'Network Idle', value: 'networkidle0' },
-        ],
-        default: 'load',
-        description: 'When to consider navigation successful',
-      },
+      PREVIEW_OPTION,
+      TIMEOUT_OPTION,
+      { ...WAIT_UNTIL_OPTION, default: 'load' },
     ],
   },
   {
-    displayName: 'Advanced Options (JSON)',
-    name: 'advancedOptions',
-    type: 'string',
-    typeOptions: { rows: 4 },
-    default: '{}',
-    description: 'JSON object with advanced options to pass to the API',
-    displayOptions: { show: { operation: ['htmlPost'] } },
+    displayName: 'HTML POST Options',
+    name: 'htmlPostOptions',
+    type: 'collection',
+    placeholder: 'Add advanced option',
+    default: {},
+    displayOptions: {
+      show: { operation: ['htmlPost'] },
+    },
+    description: 'Advanced options for POST requests with enhanced control',
+    options: [
+      HEADERS_OPTION,
+      PREVIEW_OPTION,
+      EXTRA_WAIT_TIME_OPTION,
+      TIMEOUT_OPTION,
+      USER_AGENT_OPTION,
+      WAIT_UNTIL_OPTION,
+    ],
   },
 ];
 
 export async function htmlGet(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
   const url = this.getNodeParameter('url', i) as string;
-  const opt = this.getNodeParameter('additionalOptions', i, {}) as IDataObject;
+  const opt = this.getNodeParameter('htmlGetOptions', i, {}) as IDataObject;
+  const enablePreview = opt.enablePreview as boolean || false;
+
+  // Remove enablePreview from options sent to API
+  const { enablePreview: _, ...apiOptions } = opt;
+
   const html = await headlessxApiRequest.call(this, {
     method: 'GET',
     url: '/api/html',
-    qs: { url, ...opt },
-    json: false,
+    qs: { url, ...apiOptions },
+    json: true, // Keep as JSON to get proper string response
   });
-  return [{
+
+  const htmlContent = typeof html === 'object' && html.data ? html.data : html;
+
+  const result: INodeExecutionData = {
     json: {
       url,
-      html,
-      contentLength: typeof html === 'string' ? html.length : 0,
+      contentLength: typeof htmlContent === 'string' ? htmlContent.length : 0,
       timestamp: new Date().toISOString(),
       success: true,
+      previewMode: enablePreview,
     },
-  } satisfies INodeExecutionData];
+  };
+
+  if (enablePreview && typeof htmlContent === 'string') {
+    try {
+      // Always provide binary data for download/preview like PDF/Screenshot
+      const fileName = `webpage_${Date.now()}.html`;
+      const buffer = Buffer.from(htmlContent, 'utf8');
+
+      // Use proper n8n binary data preparation with explicit property name
+      const binaryPropertyName = 'data';
+      const binaryData = await this.helpers.prepareBinaryData(
+        buffer,
+        fileName,
+        'text/html'
+      );
+
+      result.binary = {
+        [binaryPropertyName]: binaryData
+      };
+
+      // Also include summary in JSON for quick reference
+      result.json.preview = {
+        type: 'html',
+        fileName: fileName,
+        summary: htmlContent.substring(0, 500) + (htmlContent.length > 500 ? '...' : ''),
+        fullLength: htmlContent.length,
+        note: 'Full HTML content available in binary data section for download/preview'
+      };
+    } catch (error) {
+      // Fallback: if binary data creation fails, just return content in JSON
+      result.json.html = htmlContent;
+      result.json.previewError = `Failed to create binary preview: ${(error as Error).message}`;
+    }
+  } else {
+    // Return as JSON (default behavior)
+    result.json.html = htmlContent;
+  }
+
+  return [result];
 }
 
 export async function htmlPost(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
   const url = this.getNodeParameter('url', i) as string;
-  let adv: IDataObject;
-  try {
-    adv = JSON.parse((this.getNodeParameter('advancedOptions', i, '{}') as string) || '{}');
-  } catch {
-    throw new NodeOperationError(this.getNode(), 'Advanced Options must be valid JSON', { itemIndex: i });
-  }
+  const adv = this.getNodeParameter('htmlPostOptions', i, {}) as IDataObject;
+  const enablePreview = adv.enablePreview as boolean || false;
+
+  // Remove enablePreview from options sent to API
+  const { enablePreview: _, ...apiOptions } = adv;
+
   const html = await headlessxApiRequest.call(this, {
     method: 'POST',
     url: '/api/html',
-    body: { url, ...adv },
-    json: false,
+    body: { url, ...apiOptions },
+    json: true, // Keep as JSON to get proper string response
   });
-  return [{
+
+  const htmlContent = typeof html === 'object' && html.data ? html.data : html;
+
+  const result: INodeExecutionData = {
     json: {
       url,
-      html,
-      contentLength: typeof html === 'string' ? html.length : 0,
+      contentLength: typeof htmlContent === 'string' ? htmlContent.length : 0,
       options: adv,
       timestamp: new Date().toISOString(),
       success: true,
+      previewMode: enablePreview,
     },
-  } satisfies INodeExecutionData];
+  };
+
+  if (enablePreview && typeof htmlContent === 'string') {
+    try {
+      // Always provide binary data for download/preview like PDF/Screenshot
+      const fileName = `webpage_${Date.now()}.html`;
+      const buffer = Buffer.from(htmlContent, 'utf8');
+
+      // Use proper n8n binary data preparation with explicit property name
+      const binaryPropertyName = 'data';
+      const binaryData = await this.helpers.prepareBinaryData(
+        buffer,
+        fileName,
+        'text/html'
+      );
+
+      result.binary = {
+        [binaryPropertyName]: binaryData
+      };
+
+      // Also include summary in JSON for quick reference
+      result.json.preview = {
+        type: 'html',
+        fileName: fileName,
+        summary: htmlContent.substring(0, 500) + (htmlContent.length > 500 ? '...' : ''),
+        fullLength: htmlContent.length,
+        note: 'Full HTML content available in binary data section for download/preview'
+      };
+    } catch (error) {
+      // Fallback: if binary data creation fails, just return content in JSON
+      result.json.html = htmlContent;
+      result.json.previewError = `Failed to create binary preview: ${(error as Error).message}`;
+    }
+  } else {
+    // Return as JSON (default behavior)
+    result.json.html = htmlContent;
+  }
+
+  return [result];
 }
 
 // Main execute function for unified interface

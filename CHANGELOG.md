@@ -5,8 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-09-14
 
-## [1.1.2] - 2025-09-13
+### Fixed
+- **🚨 CRITICAL PRODUCTION FIX**: Resolved "stream.on is not a function" error in preview functionality
+- **🔧 Binary Data Handling**: Fixed `prepareBinaryData()` calls to use `Buffer.from()` instead of raw strings
+- **🛡️ Enhanced Error Handling**: Added comprehensive try-catch blocks with JSON fallbacks for preview operations
+- **📄 HTML Preview Fix**: Fixed both GET and POST HTML extraction preview functionality
+- **📝 Content Preview Fix**: Fixed both GET and POST content extraction preview functionality
+
+### Added
+- **🔧 BinaryDataHelper Utility**: New comprehensive utility class for robust binary data operations
+- **✅ Environment Validation**: Added n8n runtime compatibility checks
+- **🛡️ Graceful Degradation**: Preview operations now fallback to JSON output if binary preparation fails
+- **📊 Production Stability**: Enhanced error handling ensures node continues working even if preview fails
+
+### Technical Improvements
+- **🔄 Buffer-Based Operations**: All binary data operations now use proper Buffer objects
+- **🧪 TypeScript Validation**: Clean compilation with enhanced type safety
+- **⚡ Production Ready**: Tested and validated for n8n production environments
+- **🔗 Future-Proof Architecture**: BinaryDataHelper provides foundation for future binary operations
+
+## [1.1.3] - 2025-09-13
 
 ### Added
 - **🎨 Enhanced User Experience**: Complete UX overhaul with visual operation categories

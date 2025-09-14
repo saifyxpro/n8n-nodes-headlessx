@@ -6,11 +6,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-orange)](https://docs.n8n.io/integrations/community-nodes/)
 [![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green)](https://github.com/your-repo/n8n-nodes-headlessx)
-[![Version](https://img.shields.io/badge/Version-v1.1.2-blue)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/releases)
+[![Version](https://img.shields.io/badge/Version-v1.1.3-blue)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/releases)
 
 An n8n community node for integrating with [HeadlessX](https://github.com/SaifyXPRO/HeadlessX) - a powerful headless browser API for web scraping, screenshot capture, and PDF generation.
 
-> **✨ New in v1.1.2**: Enhanced UX with visual operation categories, emoji icons, advanced POST options, and improved user interface!
+> **✨ New in v1.1.3**: Enhanced UX with visual operation categories, emoji icons, advanced POST options, and improved user interface!
 
 ## 🚀 What is HeadlessX?
 
@@ -256,9 +256,9 @@ The credential automatically tests connectivity to your HeadlessX server:
 
 ## 🎨 Visual Interface & Screenshots
 
-### Enhanced Operation Selection (v1.1.2)
+### Enhanced Operation Selection (v1.1.3)
 
-The n8n-nodes-headlessx v1.1.2 features a completely redesigned user interface with visual operation categories, emoji icons, and smart organization for improved user experience.
+The n8n-nodes-headlessx v1.1.3 features a completely redesigned user interface with visual operation categories, emoji icons, and smart organization for improved user experience.
 
 #### 📊 Operation Categories
 
@@ -320,7 +320,7 @@ Execute custom scripts and advanced page interactions:
 ![Full Page Render](assets/full_page_render.png)
 *Advanced page rendering with custom script execution*
 
-### 🎯 Enhanced Features (v1.1.2)
+### 🎯 Enhanced Features (v1.1.3)
 
 #### Visual Operation Selection
 - **📱 Emoji Icons**: Each operation features intuitive icons for quick recognition

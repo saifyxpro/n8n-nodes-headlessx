@@ -1,6 +1,8 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData, INodeProperties, INodePropertyOptions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
+import { Buffer } from 'buffer';
 import { headlessxApiRequest } from '../helpers/requests';
+import { TIMEOUT_OPTION, USER_AGENT_OPTION } from './shared/commonOptions';
 
 export const option: INodePropertyOptions = {
   name: 'Take Screenshot',
@@ -87,10 +89,10 @@ export const properties: INodeProperties[] = [
       },
       {
         displayName: 'Extra Wait Time (MS)',
-        name: 'extraWait',
+        name: 'extraWaitTime',
         type: 'number',
-        default: 2000,
-        description: 'Additional time to wait before taking screenshot',
+        default: 5000,
+        description: 'Additional time to wait before taking screenshot to ensure all content loads',
         typeOptions: {
           minValue: 0,
           maxValue: 30000,
@@ -140,44 +142,8 @@ export const properties: INodeProperties[] = [
         placeholder: '.ads, #popup, .cookie-banner',
         description: 'CSS selectors of elements to remove before taking screenshot (comma-separated)',
       },
-      {
-        displayName: 'Scroll Behavior',
-        name: 'scrollBehavior',
-        type: 'options',
-        options: [
-          { name: 'Auto', value: 'auto', description: 'Automatic scrolling behavior' },
-          { name: 'Instant', value: 'instant', description: 'No scrolling animation' },
-          { name: 'Smooth', value: 'smooth', description: 'Smooth scrolling animation' },
-        ],
-        default: 'auto',
-        description: 'How to handle page scrolling during screenshot',
-      },
-      {
-        displayName: 'Timeout',
-        name: 'timeout',
-        type: 'number',
-        default: 30000,
-        description: 'Request timeout in milliseconds',
-        typeOptions: {
-          minValue: 1000,
-          maxValue: 120000,
-        },
-      },
-      {
-        displayName: 'User Agent',
-        name: 'userAgent',
-        type: 'string',
-        default: '',
-        placeholder: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        description: 'Custom user agent string (leave empty for default)',
-      },
-      {
-        displayName: 'Wait for Network Idle',
-        name: 'waitForNetworkIdle',
-        type: 'boolean',
-        default: true,
-        description: 'Whether to wait for network activity to finish before taking screenshot',
-      },
+      TIMEOUT_OPTION,
+      USER_AGENT_OPTION,
       {
         displayName: 'Wait for Selector',
         name: 'waitForSelector',
@@ -198,25 +164,79 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
     throw new NodeOperationError(this.getNode(), 'URL is required', { itemIndex: i });
   }
 
+  // Set default values for perfect rendering
+  const enhancedOptions = {
+    ...additionalOptions,
+    // Ensure perfect rendering defaults
+    extraWaitTime: additionalOptions.extraWaitTime || 5000,
+    captureFullPage: additionalOptions.captureFullPage !== false,
+    disableAnimations: additionalOptions.disableAnimations !== false,
+    timeout: Number(additionalOptions.timeout) || 60000,
+    format: additionalOptions.format || 'png',
+    quality: additionalOptions.quality || 80,
+  };
+
   try {
-    const responseData = await headlessxApiRequest.call(this, {
-      method: 'POST',
+    // Get binary data from HeadlessX API using GET for better compatibility
+    const response = await headlessxApiRequest.call(this, {
+      method: 'GET',
       url: '/api/screenshot',
-      body: { url, ...additionalOptions },
-      json: true,
+      qs: { url, ...enhancedOptions },
+      json: false,
+      encoding: null, // Get raw binary data
+      timeout: enhancedOptions.timeout,
+      returnFullResponse: true,
     });
 
+    // Handle the response which might be a Buffer or have data/body property
+    let imageBuffer: Buffer;
+
+    if (Buffer.isBuffer(response)) {
+      imageBuffer = response;
+    } else if (response && response.body && Buffer.isBuffer(response.body)) {
+      imageBuffer = response.body;
+    } else if (response && response.data && Buffer.isBuffer(response.data)) {
+      imageBuffer = response.data;
+    } else if (typeof response === 'string') {
+      // If it's a base64 string, convert it to buffer
+      imageBuffer = Buffer.from(response, 'base64');
+    } else if (response && response.body && typeof response.body === 'string') {
+      imageBuffer = Buffer.from(response.body, 'base64');
+    } else if (response && response.data && typeof response.data === 'string') {
+      imageBuffer = Buffer.from(response.data, 'base64');
+    } else {
+      throw new Error('Invalid response format from HeadlessX API');
+    }
+
+    // Determine file extension and MIME type based on format
+    const format = enhancedOptions.format as string;
+    const mimeType = format === 'jpeg' ? 'image/jpeg' :
+                    format === 'webp' ? 'image/webp' : 'image/png';
+    const fileExtension = format === 'jpeg' ? 'jpg' : format;
+    const fileName = `screenshot_${Date.now()}.${fileExtension}`;
+
+    // Prepare binary data for n8n
+    const binaryData = await this.helpers.prepareBinaryData(
+      imageBuffer,
+      fileName,
+      mimeType
+    );
+
     return [{
-      json: responseData,
-      binary: responseData.image ? {
-        data: {
-          data: responseData.image,
-          mimeType: responseData.mimeType || 'image/png',
-          fileName: responseData.filename || 'screenshot.png',
-        },
-      } : undefined,
+      json: {
+        success: true,
+        url,
+        format,
+        timestamp: new Date().toISOString(),
+        fileSize: imageBuffer.length,
+        fileName,
+        options: enhancedOptions,
+      },
+      binary: {
+        data: binaryData,
+      },
     } satisfies INodeExecutionData];
   } catch (error) {
-    throw new NodeOperationError(this.getNode(), `Screenshot capture failed: ${error.message}`, { itemIndex: i });
+    throw new NodeOperationError(this.getNode(), `Screenshot capture failed: ${(error as Error).message}`, { itemIndex: i });
   }
 }

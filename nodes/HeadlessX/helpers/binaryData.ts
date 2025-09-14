@@ -34,8 +34,8 @@ export class BinaryDataHelper {
       }
 
       // Convert string to Buffer with proper encoding detection
-      const encoding = BinaryDataHelper.detectEncoding(content);
-      const buffer = Buffer.from(content, encoding);
+  const encoding: BufferEncoding = BinaryDataHelper.detectEncoding(content as string);
+  const buffer = Buffer.from(content, encoding);
 
       // Validate buffer creation
       if (!buffer || buffer.length === 0) {
@@ -108,7 +108,7 @@ export class BinaryDataHelper {
   /**
    * Detects appropriate encoding for string content
    */
-  private static detectEncoding(content: string): string {
+  private static detectEncoding(content: string): BufferEncoding {
     try {
       // Always use UTF-8 as it's the safest and most widely supported
       return 'utf8';

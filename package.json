@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-headlessx",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "n8n community node for HeadlessX API integration - web scraping, screenshots, and PDF generation",
   "keywords": [
     "n8n-community-node-package",
@@ -28,7 +28,8 @@
   "engines": {
     "node": ">=20.15"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "npx rimraf dist && tsc && gulp build:icons",
     "dev": "tsc --watch",
@@ -50,11 +51,14 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "^20.14.10",
     "@typescript-eslint/parser": "~8.32.0",
     "eslint": "^8.57.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",
     "gulp": "^5.0.0",
     "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
     "typescript": "^5.8.2"
   },
   "peerDependencies": {

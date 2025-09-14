@@ -2,3 +2,4 @@
 *.tsbuildinfo
 test-api.js
 upgrades
+test-node.js

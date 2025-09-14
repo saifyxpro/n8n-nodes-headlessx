@@ -17,10 +17,10 @@
 [![Puppeteer](https://img.shields.io/badge/Puppeteer-40B5A4?style=for-the-badge&logo=puppeteer&logoColor=white&labelColor=000000)](https://pptr.dev/)
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/SaifyXPRO/n8n-nodes-headlessx/ci.yml?branch=master&style=for-the-badge&logo=github-actions&logoColor=white&labelColor=000000)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/actions)
-[![Version](https://img.shields.io/badge/Version-v1.2.0-2ea043?style=for-the-badge&logo=semver&logoColor=white&labelColor=000000)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/releases)
+[![Version](https://img.shields.io/badge/Version-v1.2.1-2ea043?style=for-the-badge&logo=semver&logoColor=white&labelColor=000000)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/releases)
 [![Last Commit](https://img.shields.io/github/last-commit/SaifyXPRO/n8n-nodes-headlessx?style=for-the-badge&logo=git&logoColor=white&labelColor=000000)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/commits/master)
 
-[📚 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [✨ Features](#-whats-new-in-v120) • [📦 Installation](#-installation) • [🔧 Configuration](#-configuration) • [💡 Examples](#-example-workflows) • [🆘 Support](#-support)
+[📚 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [✨ Features](#-whats-new-in-v121) • [📦 Installation](#-installation) • [🔧 Configuration](#-configuration) • [💡 Examples](#-example-workflows) • [🆘 Support](#-support)
 
 </div>
 
@@ -49,7 +49,7 @@
 > 
 > **🔗 Get HeadlessX**: [github.com/SaifyXPRO/HeadlessX](https://github.com/SaifyXPRO/HeadlessX)
 
-## ✨ What's New in v1.2.0
+## ✨ What's New in v1.2.1
 
 <div align="center">
 
@@ -84,7 +84,7 @@
 - **Production Ready**: Tested and validated for n8n production environments
 - **Error Transparency**: Comprehensive logging and error reporting
 
-> **🎯 Upgrade Impact**: v1.2.0 resolves all known production issues while maintaining full backward compatibility
+> **🎯 Upgrade Impact**: v1.2.1 resolves all known production issues while maintaining full backward compatibility
 
 ## � Quick Start
 
@@ -329,11 +329,11 @@ Copy-Item -Recurse .\n8n-nodes-headlessx "$HOME/.n8n/custom/"
 
 ## 🎨 Visual Interface & Enhanced UX
 
-### 🎯 Modern Operation Selection (v1.2.0)
+### 🎯 Modern Operation Selection (v1.2.1)
 
 <div align="center">
 
-The n8n-nodes-headlessx v1.2.0 features **critical production fixes** with enhanced binary data handling, robust error recovery, and improved stability for enterprise n8n environments.
+The n8n-nodes-headlessx v1.2.1 features **critical production fixes** with enhanced binary data handling, robust error recovery, and improved stability for enterprise n8n environments.
 
 ![Operation Categories](https://img.shields.io/badge/Categories-3-blue?style=for-the-badge)
 ![Visual_Icons](https://img.shields.io/badge/Visual_Icons-✓-green?style=for-the-badge)
@@ -382,7 +382,7 @@ The n8n-nodes-headlessx v1.2.0 features **critical production fixes** with enhan
 
 </details>
 
-### 🎯 Enhanced Features (v1.2.0)
+### 🎯 Enhanced Features (v1.2.1)
 
 <div align="center">
 
@@ -737,9 +737,9 @@ volumes:
 <details>
 <summary><strong>💾 Binary Data Issues</strong></summary>
 
-**v1.2.0 Fixed:** "stream.on is not a function" errors
+**v1.2.1 Fixed:** "stream.on is not a function" errors
 
-| Issue | v1.2.0 Solution |
+| Issue | v1.2.1 Solution |
 |-------|----------------|
 | **Preview Failures** | Enhanced Buffer-based binary handling |
 | **Large Files** | Graceful degradation to JSON output |
@@ -853,6 +853,7 @@ This project is licensed under the **MIT License** - see the [LICENSE.md](LICENS
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| **v1.2.1** | 2025-09-14 | 📦 Package version maintenance and verification readiness |
 | **v1.2.0** | 2025-09-14 | 🚨 Critical production fixes, enhanced binary data handling |
 | **v1.1.3** | 2025-09-13 | ✨ Enhanced UX with visual operation categories, emoji icons |
 | **v1.1.2** | 2025-09-XX | 🔧 Improved setup documentation, duplicate field fixes |

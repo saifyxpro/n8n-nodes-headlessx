@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-headlessx",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "n8n community node for HeadlessX API integration - web scraping, screenshots, and PDF generation",
   "keywords": [
     "n8n-community-node-package",
@@ -63,5 +63,8 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

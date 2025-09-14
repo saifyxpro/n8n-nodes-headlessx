@@ -1,5 +1,4 @@
 import { IExecuteFunctions, IBinaryData } from 'n8n-workflow';
-import { Buffer } from 'buffer';
 
 /**
  * Robust binary data preparation helper for n8n community nodes

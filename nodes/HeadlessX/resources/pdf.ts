@@ -1,6 +1,5 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData, INodeProperties, INodePropertyOptions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
-import { Buffer } from 'buffer';
 import { headlessxApiRequest } from '../helpers/requests';
 import { EXTRA_WAIT_TIME_OPTION, TIMEOUT_OPTION, WAIT_UNTIL_OPTION } from './shared/commonOptions';
 

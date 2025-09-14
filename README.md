@@ -5,12 +5,12 @@
 [![npm version](https://badge.fury.io/js/n8n-nodes-headlessx.svg)](https://badge.fury.io/js/n8n-nodes-headlessx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-orange)](https://docs.n8n.io/integrations/community-nodes/)
-[![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green)](https://github.com/your-repo/n8n-nodes-headlessx)
-[![Version](https://img.shields.io/badge/Version-v1.1.3-blue)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/releases)
+[![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green)](https://github.com/SaifyXPRO/n8n-nodes-headlessx)
+[![Version](https://img.shields.io/badge/Version-v1.2.0-blue)](https://github.com/SaifyXPRO/n8n-nodes-headlessx/releases)
 
 An n8n community node for integrating with [HeadlessX](https://github.com/SaifyXPRO/HeadlessX) - a powerful headless browser API for web scraping, screenshot capture, and PDF generation.
 
-> **✨ New in v1.1.3**: Enhanced UX with visual operation categories, emoji icons, advanced POST options, and improved user interface!
+> **🚨 New in v1.2.0**: Critical production fix for preview functionality! Resolved "stream.on is not a function" error with enhanced binary data handling and robust error recovery.
 
 ## 🚀 What is HeadlessX?
 
@@ -26,6 +26,25 @@ HeadlessX is a robust headless browser API built with Puppeteer that provides:
 > **📋 Important**: HeadlessX runs as a **separate API server** that you must install and run independently. This n8n node acts as a client to communicate with your HeadlessX server instance.
 > 
 > **🔗 Get HeadlessX**: [github.com/SaifyXPRO/HeadlessX](https://github.com/SaifyXPRO/HeadlessX)
+
+## ✨ What's New in v1.2.0
+
+### 🚨 Critical Production Fixes
+- **Fixed Preview Functionality**: Resolved "stream.on is not a function" error in n8n production environments
+- **Enhanced Binary Data Handling**: All `prepareBinaryData()` calls now use proper Buffer objects
+- **Robust Error Recovery**: Added comprehensive try-catch blocks with JSON fallbacks
+- **Production Stability**: Enhanced error handling ensures nodes continue working even if preview fails
+
+### 🔧 Technical Improvements
+- **BinaryDataHelper Utility**: New comprehensive utility class for binary data operations
+- **Environment Validation**: Added n8n runtime compatibility checks
+- **Buffer-Based Operations**: All binary operations now use proper Buffer objects for stability
+- **TypeScript Enhancements**: Clean compilation with enhanced type safety
+
+### 🛡️ Enhanced Reliability
+- **Graceful Degradation**: Preview operations fallback to JSON output if binary preparation fails
+- **Future-Proof Architecture**: BinaryDataHelper provides foundation for future binary operations
+- **Production Ready**: Tested and validated for n8n production environments
 
 ## 📦 Installation
 
@@ -256,9 +275,9 @@ The credential automatically tests connectivity to your HeadlessX server:
 
 ## 🎨 Visual Interface & Screenshots
 
-### Enhanced Operation Selection (v1.1.3)
+### Enhanced Operation Selection (v1.2.0)
 
-The n8n-nodes-headlessx v1.1.3 features a completely redesigned user interface with visual operation categories, emoji icons, and smart organization for improved user experience.
+The n8n-nodes-headlessx v1.2.0 features critical production fixes with enhanced binary data handling, robust error recovery, and improved stability for n8n production environments.
 
 #### 📊 Operation Categories
 
@@ -320,7 +339,7 @@ Execute custom scripts and advanced page interactions:
 ![Full Page Render](assets/full_page_render.png)
 *Advanced page rendering with custom script execution*
 
-### 🎯 Enhanced Features (v1.1.3)
+### 🎯 Enhanced Features (v1.2.0)
 
 #### Visual Operation Selection
 - **📱 Emoji Icons**: Each operation features intuitive icons for quick recognition

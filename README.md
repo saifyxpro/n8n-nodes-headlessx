@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![HeadlessX Logo](https://raw.githubusercontent.com/SaifyXPRO/HeadlessX/main/assets/logos/h-lettermark.svg)
+![HeadlessX Logo](assets/icons/logo-hr.svg)
 
 **🚀 n8n community node for HeadlessX v2 - Anti-detection web scraping with Camoufox**
 

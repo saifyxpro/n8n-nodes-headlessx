@@ -36,11 +36,7 @@ export class HeadlessXApi implements ICredentialType {
 		type: 'generic',
 		properties: {
 			headers: {
-				'X-Token': '={{ $credentials.token }}',
-				'Authorization': '=Bearer {{ $credentials.token }}',
-			},
-			qs: {
-				token: '={{ $credentials.token }}',
+				'Authorization': 'Bearer {{ $credentials.token }}',
 			},
 		},
 	};
@@ -51,13 +47,6 @@ export class HeadlessXApi implements ICredentialType {
 			baseURL: '={{ $credentials.baseUrl }}',
 			url: '/api/status',
 			method: 'GET',
-			headers: {
-				'X-Token': '={{ $credentials.token }}',
-				'Authorization': '=Bearer {{ $credentials.token }}',
-			},
-			qs: {
-				token: '={{ $credentials.token }}',
-			},
 		},
 	};
 }

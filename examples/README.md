@@ -1,34 +1,121 @@
-## Examples and Templates
+# HeadlessX n8n Node Examples
 
-This directory contains examples and templates for using the HeadlessX n8n community node.
+Example workflows for the HeadlessX n8n community node (v2.0).
 
-### Available Examples
+## 📊 Available Operations
 
-1. **Basic Usage** - Simple examples for each operation
-2. **Advanced Workflows** - Complex automation scenarios
-3. **Error Handling** - Best practices for handling errors
-4. **Batch Processing** - Examples of processing multiple URLs
+| Operation    | Description                    | Endpoint                       |
+| ------------ | ------------------------------ | ------------------------------ |
+| `html`       | Extract raw HTML               | `POST /api/website/html`       |
+| `htmlJs`     | Extract HTML with JS rendering | `POST /api/website/html-js`    |
+| `content`    | Extract Markdown content       | `POST /api/website/content`    |
+| `screenshot` | Capture screenshots            | `POST /api/website/screenshot` |
+| `googleSerp` | Google SERP scraping           | `POST /api/google-serp/search` |
 
-### Getting Started
+## 📄 HTML Extraction
 
-Copy any example to your n8n instance and modify the parameters according to your needs.
+```json
+{
+  "operation": "html",
+  "url": "https://example.com",
+  "htmlOptions": {
+    "timeout": 30000,
+    "waitUntil": "networkidle2"
+  }
+}
+```
 
-### Template Structure
+## 📄 HTML with JavaScript Rendering
 
-Each example includes:
-- Workflow JSON file
-- Documentation explaining the use case
-- Configuration parameters
-- Expected outputs
+For SPAs and dynamic content:
 
-### Contributing Examples
+```json
+{
+  "operation": "htmlJs",
+  "url": "https://react-app.example.com",
+  "htmlJsOptions": {
+    "timeout": 60000,
+    "extraWaitTime": 3000,
+    "waitUntil": "networkidle0"
+  }
+}
+```
 
-If you have useful workflow examples, please consider contributing them by:
-1. Creating a new example file
-2. Adding proper documentation
-3. Testing the workflow
-4. Submitting a pull request
+## 📝 Content Extraction
 
-### Support
+Extract clean Markdown:
 
-For help with examples, please check the main README.md or open an issue.
+```json
+{
+  "operation": "content",
+  "url": "https://blog.example.com/article",
+  "contentOptions": {
+    "timeout": 30000
+  }
+}
+```
+
+## 📸 Screenshot Capture
+
+```json
+{
+  "operation": "screenshot",
+  "url": "https://example.com",
+  "screenshotOptions": {
+    "fullPage": true,
+    "format": "png",
+    "quality": 90
+  }
+}
+```
+
+## 🔍 Google SERP Search
+
+```json
+{
+  "operation": "googleSerp",
+  "query": "web scraping tools",
+  "serpOptions": {
+    "num": 20,
+    "hl": "en",
+    "gl": "us",
+    "safe": "off"
+  }
+}
+```
+
+## 🔄 Workflow Examples
+
+### SEO Monitoring Workflow
+
+1. **Schedule Trigger** - Daily at 9 AM
+2. **HeadlessX: Google SERP** - Track keyword rankings
+3. **Compare** - Check against previous results
+4. **Slack** - Alert on ranking changes
+
+### Content Aggregation Workflow
+
+1. **RSS Trigger** - New article detected
+2. **HeadlessX: Content** - Extract article text
+3. **OpenAI** - Summarize content
+4. **Notion** - Store summary
+
+### Visual Testing Workflow
+
+1. **Webhook** - Deployment notification
+2. **HeadlessX: Screenshot** - Capture pages
+3. **Compare Images** - Detect visual changes
+4. **Email** - Send regression report
+
+## 🤝 Contributing Examples
+
+1. Create example workflow JSON
+2. Add documentation explaining use case
+3. Test the workflow
+4. Submit pull request
+
+## 📚 Support
+
+- [Main Documentation](../README.md)
+- [HeadlessX API](https://github.com/SaifyXPRO/HeadlessX)
+- [n8n Community](https://community.n8n.io/)

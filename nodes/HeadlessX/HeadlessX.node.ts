@@ -11,11 +11,12 @@ import { properties } from './HeadlessX.properties';
 import { methods } from './HeadlessX.methods';
 
 import * as html from './resources/html';
+import * as htmlJs from './resources/htmlJs';
 import * as content from './resources/content';
 import * as screenshot from './resources/screenshot';
-import * as pdf from './resources/pdf';
-import * as render from './resources/render';
-import * as batch from './resources/batch';
+import * as googleSerp from './resources/googleSerp';
+import * as profile from './resources/profile';
+import * as proxy from './resources/proxy';
 
 export class HeadlessX implements INodeType {
 	methods = methods;
@@ -24,9 +25,9 @@ export class HeadlessX implements INodeType {
 		name: 'headlessX',
 		icon: 'file:headlessx.svg',
 		group: ['transform'],
-		version: 1,
-		subtitle: '={{$parameter["operation"]}}',
-		description: 'Interact with HeadlessX API for web scraping, screenshots, and PDF generation',
+		version: 2,
+		subtitle: '={{$parameter["resource"] + ": " + $parameter["operation"]}}',
+		description: 'Anti-detection web scraping with HeadlessX v2 API',
 		defaults: {
 			name: 'HeadlessX',
 		},
@@ -38,13 +39,7 @@ export class HeadlessX implements INodeType {
 				required: true,
 			},
 		],
-		requestDefaults: {
-			baseURL: '={{ $credentials.baseUrl }}',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-		},
+
 		properties,
 	};
 
@@ -53,36 +48,27 @@ export class HeadlessX implements INodeType {
 		const returnData: INodeExecutionData[] = [];
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
+			let resource = 'unknown';
 			let operation = 'unknown';
 			try {
+				resource = this.getNodeParameter('resource', itemIndex) as string;
 				operation = this.getNodeParameter('operation', itemIndex) as string;
 
 				let results: INodeExecutionData[] = [];
 
-				// Route operations to their respective resource modules
-				switch (operation) {
-					case 'htmlGet':
-					case 'htmlPost':
-						results = await html.execute.call(this, itemIndex);
-						break;
-					case 'contentGet':
-					case 'contentPost':
-						results = await content.execute.call(this, itemIndex);
-						break;
-					case 'screenshot':
-						results = await screenshot.execute.call(this, itemIndex);
-						break;
-					case 'pdf':
-						results = await pdf.execute.call(this, itemIndex);
-						break;
-					case 'render':
-						results = await render.execute.call(this, itemIndex);
-						break;
-					case 'batch':
-						results = await batch.execute.call(this, itemIndex);
-						break;
-					default:
-						throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, { itemIndex });
+				if (resource === 'website') {
+					if (operation === 'html') results = await html.execute.call(this, itemIndex);
+					else if (operation === 'htmlJs') results = await htmlJs.execute.call(this, itemIndex);
+					else if (operation === 'content') results = await content.execute.call(this, itemIndex);
+					else if (operation === 'screenshot') results = await screenshot.execute.call(this, itemIndex);
+				} else if (resource === 'googleSerp') {
+					results = await googleSerp.execute.call(this, itemIndex);
+				} else if (resource === 'profile') {
+					results = await profile.execute.call(this, itemIndex);
+				} else if (resource === 'proxy') {
+					results = await proxy.execute.call(this, itemIndex);
+				} else {
+					throw new NodeOperationError(this.getNode(), `Unknown resource/operation: ${resource}/${operation}`, { itemIndex });
 				}
 
 				// Apply execution metadata and add to return data
@@ -94,7 +80,8 @@ export class HeadlessX implements INodeType {
 					const errorData: INodeExecutionData = {
 						json: {
 							error: (error as Error).message,
-							operation: operation,
+							resource,
+							operation,
 							timestamp: new Date().toISOString()
 						},
 						pairedItem: { item: itemIndex }
@@ -102,7 +89,6 @@ export class HeadlessX implements INodeType {
 					returnData.push(errorData);
 				} else {
 					const e: any = error;
-					// Enrich error to aid debugging (similar to browserless)
 					const credentials = (await this.getCredentials('headlessXApi')) as IDataObject;
 					const baseURL = (credentials?.baseUrl as string) || '';
 

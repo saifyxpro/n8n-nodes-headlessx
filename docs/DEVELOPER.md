@@ -11,21 +11,38 @@ n8n-nodes-headlessx/
 ├── 📁 nodes/                    # Node implementations
 │   └── HeadlessX/
 │       ├── HeadlessX.node.ts    # Main node logic
-│       └── headlessx.svg        # Node icon
+│       ├── HeadlessX.properties.ts  # Node properties
+│       ├── HeadlessX.methods.ts # Helper methods
+│       ├── headlessx.svg        # Node icon
+│       ├── 📁 resources/        # Operation modules
+│       │   ├── index.ts         # Operation exports
+│       │   ├── html.ts          # HTML extraction
+│       │   ├── htmlJs.ts        # HTML with JS rendering
+│       │   ├── content.ts       # Content extraction
+│       │   ├── screenshot.ts    # Screenshot capture
+│       │   ├── googleSerp.ts    # Google SERP search
+│       │   └── shared/          # Shared options
+│       └── 📁 helpers/          # Helper utilities
+│           └── requests.ts      # API request helper
 ├── 📁 credentials/              # Authentication
 │   └── HeadlessXApi.credentials.ts
 ├── 📁 dist/                     # Compiled output (auto-generated)
-├── 📁 assets/icons/             # Source icons
+├── 📁 docs/                     # Documentation
 ├── 📁 examples/                 # Workflow examples
-├── 📁 .github/                  # GitHub automation
-│   ├── workflows/ci.yml         # CI/CD pipeline
-│   └── ISSUE_TEMPLATE/          # Issue templates
 ├── package.json                 # npm configuration
 ├── tsconfig.json               # TypeScript config
-├── gulpfile.js                 # Build automation
-├── .eslintrc.js                # Linting rules
 └── README.md                   # Documentation
 ```
+
+## 🎯 v2.0 Operations
+
+| Operation    | File                      | Endpoint                       |
+| ------------ | ------------------------- | ------------------------------ |
+| `html`       | `resources/html.ts`       | `POST /api/website/html`       |
+| `htmlJs`     | `resources/htmlJs.ts`     | `POST /api/website/html-js`    |
+| `content`    | `resources/content.ts`    | `POST /api/website/content`    |
+| `screenshot` | `resources/screenshot.ts` | `POST /api/website/screenshot` |
+| `googleSerp` | `resources/googleSerp.ts` | `POST /api/google-serp/search` |
 
 ## 🔧 Development Workflow
 
@@ -33,7 +50,7 @@ n8n-nodes-headlessx/
 - Node.js 20.15+
 - npm/yarn
 - n8n installed globally
-- HeadlessX API server for testing
+- HeadlessX v2 API server for testing
 
 ### Setup
 ```bash
@@ -55,160 +72,115 @@ npm run build        # Compile TypeScript and process icons
 npm run dev          # Watch mode compilation
 npm run lint         # Check code style
 npm run lintfix      # Auto-fix linting issues
-npm run format       # Format code with Prettier
 ```
 
-## 📝 File Purposes
+## 📝 Resource Module Structure
 
-### `nodes/HeadlessX/HeadlessX.node.ts`
-**Main node implementation**
-- Defines all 10 HeadlessX operations
-- Handles API communication
-- Manages error handling and validation
-- Processes binary data (screenshots/PDFs)
+Each operation is defined in its own resource file:
 
-### `credentials/HeadlessXApi.credentials.ts`
-**Authentication management**
-- Defines credential fields (baseUrl, token)
-- Sets up multiple auth methods (X-Token, Bearer, Query)
-- Includes credential testing logic
-
-### `package.json` 
-**n8n manifest and dependencies**
-- Contains n8n-specific configuration
-- Defines entry points for nodes and credentials
-- Lists all dependencies and scripts
-
-### Build Files
-- `tsconfig.json` - TypeScript compilation settings
-- `gulpfile.js` - Icon processing automation
-- `.eslintrc.js` - Code quality rules with n8n standards
-
-## 🎯 Key Development Patterns
-
-### Node Operation Structure
 ```typescript
-async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-    const items = this.getInputData();
-    const operation = this.getNodeParameter('operation', 0) as string;
-    const returnData: INodeExecutionData[] = [];
+// resources/html.ts
+import type { IDataObject, IExecuteFunctions, INodeExecutionData, INodeProperties, INodePropertyOptions } from 'n8n-workflow';
+import { headlessxApiRequest } from '../helpers/requests';
 
-    for (let i = 0; i < items.length; i++) {
-        try {
-            const result = await this.helpers.httpRequestWithAuthentication.call(
-                this,
-                'headlessXApi',
-                requestOptions
-            );
-            
-            returnData.push({ json: result });
-        } catch (error) {
-            // Handle errors appropriately
-        }
-    }
-    
-    return [returnData];
+// Operation definition for the dropdown
+export const option: INodePropertyOptions = {
+  name: 'Extract HTML',
+  value: 'html',
+  description: 'Extract raw HTML from a webpage',
+  action: 'Extract HTML',
+};
+
+// Operation-specific options
+export const properties: INodeProperties[] = [
+  {
+    displayName: 'HTML Options',
+    name: 'htmlOptions',
+    type: 'collection',
+    // ... options
+  },
+];
+
+// Execute function
+export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
+  const url = this.getNodeParameter('url', i) as string;
+  const options = this.getNodeParameter('htmlOptions', i, {}) as IDataObject;
+
+  const response = await headlessxApiRequest.call(this, {
+    method: 'POST',
+    url: '/api/website/html',
+    body: { url, ...options },
+    json: true,
+  });
+
+  return [{ json: { success: true, data: response } }];
 }
 ```
 
-### Error Handling Best Practices
-```typescript
-try {
-    // API call logic
-} catch (error) {
-    if (this.continueOnFail()) {
-        returnData.push({ 
-            json: { error: error.message },
-            pairedItem: { item: i }
-        });
-    } else {
-        throw new NodeApiError(this.getNode(), error);
-    }
-}
-```
+## 🎯 Adding New Operations
 
-### Binary Data Handling
-```typescript
-// For screenshots and PDFs
-const binaryData = await this.helpers.prepareBinaryData(
-    Buffer.from(result, 'base64'),
-    `screenshot-${Date.now()}.png`,
-    'image/png'
-);
+1. **Create resource file** in `resources/`:
+   ```typescript
+   // resources/newOperation.ts
+   export const option: INodePropertyOptions = { ... };
+   export const properties: INodeProperties[] = [ ... ];
+   export async function execute(...) { ... }
+   ```
 
-returnData.push({
-    json: { success: true },
-    binary: { data: binaryData },
-    pairedItem: { item: i }
-});
-```
+2. **Update index.ts**:
+   ```typescript
+   import * as newOperation from './newOperation.js';
+   
+   // Add to operations array
+   const operations = [
+     ...existingOperations,
+     { ...newOperation.option, name: '🆕 New Operation' },
+   ];
+   
+   // Add to properties
+   export const rawProperties: INodeProperties[] = [
+     ...existingProperties,
+     ...newOperation.properties,
+   ];
+   ```
 
-## 🧪 Testing Strategy
+3. **Update HeadlessX.node.ts**:
+   ```typescript
+   import * as newOperation from './resources/newOperation';
+   
+   // Add case to switch
+   case 'newOperation':
+     results = await newOperation.execute.call(this, itemIndex);
+     break;
+   ```
+
+## 🧪 Testing
 
 ### Manual Testing
-1. Build the project: `npm run build`
-2. Link locally: `npm link`
+1. Build: `npm run build`
+2. Link: `npm link`
 3. Start n8n: `n8n start`
-4. Create test workflows using each operation
-5. Verify all operations work correctly
+4. Test each operation in a workflow
 
-### API Integration Testing
-```bash
-node test-api.js  # Runs comprehensive API tests
-```
-
-### Automated Testing
-- CI/CD runs on every PR
-- Linting and build verification
-- Automated npm publishing on releases
+### API Endpoints
+- Health: `GET /api/health`
+- HTML: `POST /api/website/html`
+- HTML-JS: `POST /api/website/html-js`
+- Content: `POST /api/website/content`
+- Screenshot: `POST /api/website/screenshot`
+- Google SERP: `POST /api/google-serp/search`
 
 ## 🔄 Release Process
 
-### Version Management
 1. Update version in `package.json`
 2. Update `CHANGELOG.md` with changes
-3. Commit changes: `git commit -m "chore: bump version to x.x.x"`
-4. Create tag: `git tag vx.x.x`
+3. Commit: `git commit -m "chore: bump version to x.x.x"`
+4. Tag: `git tag vx.x.x`
 5. Push: `git push origin main --tags`
-
-### Publishing
-```bash
-npm run build       # Ensure clean build
-npm run lint        # Verify code quality
-npm publish         # Publish to npm registry
-```
-
-## 🐛 Common Issues & Solutions
-
-### Build Issues
-- **TypeScript errors**: Check `tsconfig.json` and fix type issues
-- **Icon processing fails**: Ensure SVG files are properly formatted
-- **ESLint errors**: Run `npm run lintfix` for auto-fixes
-
-### Runtime Issues
-- **Authentication fails**: Verify HeadlessX server is running and token is valid
-- **Binary data problems**: Check Buffer handling and MIME types
-- **n8n not recognizing node**: Ensure `npm link` was run and n8n restarted
-
-### Development Tips
-- Use VS Code with n8n extension
-- Keep n8n running in development mode
-- Test each operation individually
-- Monitor n8n logs for debugging
+6. Publish: `npm publish`
 
 ## 📚 Resources
 
-- [n8n Node Development Documentation](https://docs.n8n.io/integrations/creating-nodes/)
+- [n8n Node Development](https://docs.n8n.io/integrations/creating-nodes/)
 - [HeadlessX API Documentation](https://github.com/SaifyXPRO/HeadlessX)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [n8n Community Forum](https://community.n8n.io/)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Make changes following the coding standards
-4. Test thoroughly
-5. Submit pull request with detailed description
-
-For detailed contribution guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).

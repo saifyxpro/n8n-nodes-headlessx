@@ -40,7 +40,7 @@ export async function headlessxApiRequest(
   }
 
   try {
-    return await this.helpers.requestWithAuthentication.call(this, 'headlessXApi', options);
+    return await this.helpers.httpRequestWithAuthentication.call(this, 'headlessXApi', options);
   } catch (error) {
     // Surface rich axios details
     const e: any = error;
@@ -48,22 +48,22 @@ export async function headlessxApiRequest(
       ...e,
       request: e?.cause?.request
         ? {
-            path: e?.cause?.request?.path,
-            _headers: e?.cause?.request?._headers,
-          }
+          path: e?.cause?.request?.path,
+          _headers: e?.cause?.request?._headers,
+        }
         : undefined,
       response: e?.cause?.response
         ? {
-            status: e?.cause?.response?.status,
-            data: e?.cause?.response?.data,
-          }
+          status: e?.cause?.response?.status,
+          data: e?.cause?.response?.data,
+        }
         : undefined,
       config: e?.cause?.config
         ? {
-            baseURL: e?.cause?.config?.baseURL ?? baseURL,
-            url: e?.cause?.config?.url,
-            method: e?.cause?.config?.method,
-          }
+          baseURL: e?.cause?.config?.baseURL ?? baseURL,
+          url: e?.cause?.config?.url,
+          method: e?.cause?.config?.method,
+        }
         : { baseURL, url: opts.url, method: opts.method },
       message: e?.message,
     };

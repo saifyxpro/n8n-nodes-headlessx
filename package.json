@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-headlessx",
-  "version": "1.2.2",
-  "description": "n8n community node for HeadlessX API integration - web scraping, screenshots, and PDF generation",
+  "version": "2.0.0",
+  "description": "n8n community node for HeadlessX v2 API - anti-detection web scraping with Camoufox",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
@@ -9,10 +9,10 @@
     "headlessx",
     "web-scraping",
     "screenshot",
-    "pdf",
-    "puppeteer",
-    "browser-automation",
-    "headless-browser",
+    "camoufox",
+    "anti-detection",
+    "stealth-browser",
+    "google-serp",
     "scraping",
     "automation"
   ],

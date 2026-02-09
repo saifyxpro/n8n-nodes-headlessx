@@ -210,7 +210,6 @@ const profileFields: INodeProperties[] = [
         },
         typeOptions: {
             minValue: 1,
-            maxValue: 100,
         },
         default: 50,
         description: 'Max number of results to return',

@@ -72,6 +72,7 @@ const operations: INodeProperties = {
             name: 'Search',
             value: 'search',
             description: 'Perform a Google search',
+            // eslint-disable-next-line n8n-nodes-base/node-param-operation-option-action-miscased
             action: 'Search Google',
         },
     ],

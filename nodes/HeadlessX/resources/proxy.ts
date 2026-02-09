@@ -185,26 +185,14 @@ const proxyFields: INodeProperties[] = [
         },
         options: [
             {
-                displayName: 'Name',
-                name: 'name',
-                type: 'string',
-                default: '',
-            },
-            {
                 displayName: 'Host',
                 name: 'host',
                 type: 'string',
                 default: '',
             },
             {
-                displayName: 'Port',
-                name: 'port',
-                type: 'number',
-                default: 0,
-            },
-            {
-                displayName: 'Username',
-                name: 'username',
+                displayName: 'Name',
+                name: 'name',
                 type: 'string',
                 default: '',
             },
@@ -212,7 +200,14 @@ const proxyFields: INodeProperties[] = [
                 displayName: 'Password',
                 name: 'password',
                 type: 'string',
+                typeOptions: { password: true },
                 default: '',
+            },
+            {
+                displayName: 'Port',
+                name: 'port',
+                type: 'number',
+                default: 0,
             },
             {
                 displayName: 'Protocol',
@@ -225,6 +220,12 @@ const proxyFields: INodeProperties[] = [
                     { name: 'SOCKS5', value: 'socks5' },
                 ],
                 default: 'http',
+            },
+            {
+                displayName: 'Username',
+                name: 'username',
+                type: 'string',
+                default: '',
             },
         ],
     },
